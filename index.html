@@ -5,13 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Interactive Clock</title>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Bw+Haas+Grotesk:wght@400&display=swap');
+
         body {
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
             height: 100vh;
             background-color: #f0f0f0;
             margin: 0;
+            font-family: 'Bw Haas Grotesk', sans-serif;
         }
         .clock-face {
             position: relative;
@@ -19,12 +23,12 @@
             height: 300px;
             border: 2px solid black;
             border-radius: 50%;
-            background: white;
+            background: black;
         }
         .hand {
             position: absolute;
-            width: 50%;
-            height: 6px;
+            width: 40%;
+            height: 2px;
             top: 50%;
             transform-origin: 100%;
             transition-timing-function: linear;
@@ -32,44 +36,59 @@
             transition-property: transform;
         }
         .hour-hand-iceland {
-            background-color: blue;
-            height: 8px;
-        }
-        .hour-hand-us {
-            background-color: red;
-            height: 8px;
+            background-color: #ff433d;
+            height: 2px;
+            border-right: 8px solid #ff433d;
+            border-top: 4px solid transparent;
+            border-bottom: 4px solid transparent;
+            width: 30%;
         }
         .minute-hand-iceland {
-            background-color: blue;
-            height: 6px;
+            background-color: #ff433d;
+            height: 2px;
+            border-right: 8px solid #ff433d;
+            border-top: 4px solid transparent;
+            border-bottom: 4px solid transparent;
+        }
+        .hour-hand-us {
+            background-color: #fb8b1e;
+            height: 2px;
+            border-right: 8px solid #fb8b1e;
+            border-top: 4px solid transparent;
+            border-bottom: 4px solid transparent;
+            width: 30%;
         }
         .minute-hand-us {
-            background-color: red;
-            height: 6px;
+            background-color: #fb8b1e;
+            height: 2px;
+            border-right: 8px solid #fb8b1e;
+            border-top: 4px solid transparent;
+            border-bottom: 4px solid transparent;
         }
         .second-hand {
             background-color: black;
             height: 2px;
-            transition-duration: 0.5s; /* Smooth sweeping motion */
+            transition-duration: 1s; /* Continuous sweeping motion */
+            width: 45%;
         }
         .clock-number {
             position: absolute;
             font-size: 24px;
             font-family: Arial, sans-serif;
+            color: white;
         }
         /* Positioning the numbers on the clock */
         .num12 { top: 10px; left: 50%; transform: translateX(-50%); }
         .num3 { top: 50%; right: 10px; transform: translateY(-50%); }
         .num6 { bottom: 10px; left: 50%; transform: translateX(-50%); }
         .num9 { top: 50%; left: 10px; transform: translateY(-50%); }
-        .num1 { top: 30px; right: 30px; }
-        .num2 { top: 50px; right: 15px; }
-        .num4 { bottom: 50px; right: 15px; }
-        .num5 { bottom: 30px; right: 30px; }
-        .num7 { bottom: 30px; left: 30px; }
-        .num8 { bottom: 50px; left: 15px; }
-        .num10 { top: 50px; left: 15px; }
-        .num11 { top: 30px; left: 30px; }
+
+        .clock-info {
+            margin-top: 20px;
+            font-size: 18px;
+            color: black;
+            text-align: center;
+        }
     </style>
 </head>
 <body>
@@ -79,24 +98,17 @@
         <div class="hand hour-hand-us" id="hour-hand-us"></div>
         <div class="hand minute-hand-us" id="minute-hand-us"></div>
         <div class="hand second-hand" id="second-hand"></div>
-        <!-- Adding numbers to the clock -->
+        <!-- Adding only the main numbers to the clock -->
         <div class="clock-number num12">12</div>
         <div class="clock-number num3">3</div>
         <div class="clock-number num6">6</div>
         <div class="clock-number num9">9</div>
-        <div class="clock-number num1">1</div>
-        <div class="clock-number num2">2</div>
-        <div class="clock-number num4">4</div>
-        <div class="clock-number num5">5</div>
-        <div class="clock-number num7">7</div>
-        <div class="clock-number num8">8</div>
-        <div class="clock-number num10">10</div>
-        <div class="clock-number num11">11</div>
+    </div>
+    <div class="clock-info">
+        Reykjavík/US Eastern Time - Made by Gudmundur Herbertsson
     </div>
     <script>
         function startClock() {
-            let previousSecondDegrees = 90;  // Start position at 12 o'clock
-
             function updateClock() {
                 const now = new Date();
 
@@ -129,19 +141,13 @@
                 document.getElementById('hour-hand-iceland').style.transform = `rotate(${icelandHoursDegrees}deg)`;
                 document.getElementById('minute-hand-iceland').style.transform = `rotate(${icelandMinutesDegrees}deg)`;
                 
-                // Smooth sweeping for second hand
-                if (secondsDegrees === previousSecondDegrees) {
-                    // Increment by a tiny amount to create continuous movement
-                    document.getElementById('second-hand').style.transform = `rotate(${secondsDegrees + 0.1}deg)`;
-                } else {
-                    document.getElementById('second-hand').style.transform = `rotate(${secondsDegrees}deg)`;
-                }
-                previousSecondDegrees = secondsDegrees;
+                // Continuous sweeping second hand
+                document.getElementById('second-hand').style.transform = `rotate(${secondsDegrees}deg)`;
             }
 
-            // Update the clock every 50ms for smooth second hand movement
+            // Update the clock every 20ms for a smooth second hand movement
             updateClock();
-            setInterval(updateClock, 50);
+            setInterval(updateClock, 20);
         }
 
         // Start the clock

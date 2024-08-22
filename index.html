@@ -5,12 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Interactive Clock</title>
     <style>
-        #clock {
-            font-family: 'Arial', sans-serif;
-            color: #333;
-            font-size: 48px;
-            text-align: center;
-            margin-top: 20%;
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f0f0f0;
+            margin: 0;
         }
         .clock-face {
             position: relative;
@@ -18,35 +19,84 @@
             height: 300px;
             border: 2px solid black;
             border-radius: 50%;
-            margin: 0 auto;
+            background: white;
         }
         .hand {
             position: absolute;
             width: 50%;
             height: 6px;
-            background-color: black;
             top: 50%;
             transform-origin: 100%;
-            transform: rotate(90deg);
-            transition: transform 0.5s ease-in-out;
+            transition-timing-function: linear;
+            transition-duration: 0.05s;
+            transition-property: transform;
         }
-        .minute {
-            height: 4px;
+        .hour-hand-iceland {
+            background-color: blue;
+            height: 8px;
         }
-        .second {
-            height: 2px;
+        .hour-hand-us {
             background-color: red;
+            height: 8px;
         }
+        .minute-hand-iceland {
+            background-color: blue;
+            height: 6px;
+        }
+        .minute-hand-us {
+            background-color: red;
+            height: 6px;
+        }
+        .second-hand {
+            background-color: black;
+            height: 2px;
+            transition-duration: 0.5s; /* Smooth sweeping motion */
+        }
+        .clock-number {
+            position: absolute;
+            font-size: 24px;
+            font-family: Arial, sans-serif;
+        }
+        /* Positioning the numbers on the clock */
+        .num12 { top: 10px; left: 50%; transform: translateX(-50%); }
+        .num3 { top: 50%; right: 10px; transform: translateY(-50%); }
+        .num6 { bottom: 10px; left: 50%; transform: translateX(-50%); }
+        .num9 { top: 50%; left: 10px; transform: translateY(-50%); }
+        .num1 { top: 30px; right: 30px; }
+        .num2 { top: 50px; right: 15px; }
+        .num4 { bottom: 50px; right: 15px; }
+        .num5 { bottom: 30px; right: 30px; }
+        .num7 { bottom: 30px; left: 30px; }
+        .num8 { bottom: 50px; left: 15px; }
+        .num10 { top: 50px; left: 15px; }
+        .num11 { top: 30px; left: 30px; }
     </style>
 </head>
 <body>
-    <div id="clock" class="clock-face">
-        <div class="hand hour" id="hour-hand"></div>
-        <div class="hand minute" id="minute-hand"></div>
-        <div class="hand second" id="second-hand"></div>
+    <div class="clock-face">
+        <div class="hand hour-hand-iceland" id="hour-hand-iceland"></div>
+        <div class="hand minute-hand-iceland" id="minute-hand-iceland"></div>
+        <div class="hand hour-hand-us" id="hour-hand-us"></div>
+        <div class="hand minute-hand-us" id="minute-hand-us"></div>
+        <div class="hand second-hand" id="second-hand"></div>
+        <!-- Adding numbers to the clock -->
+        <div class="clock-number num12">12</div>
+        <div class="clock-number num3">3</div>
+        <div class="clock-number num6">6</div>
+        <div class="clock-number num9">9</div>
+        <div class="clock-number num1">1</div>
+        <div class="clock-number num2">2</div>
+        <div class="clock-number num4">4</div>
+        <div class="clock-number num5">5</div>
+        <div class="clock-number num7">7</div>
+        <div class="clock-number num8">8</div>
+        <div class="clock-number num10">10</div>
+        <div class="clock-number num11">11</div>
     </div>
     <script>
         function startClock() {
+            let previousSecondDegrees = 90;  // Start position at 12 o'clock
+
             function updateClock() {
                 const now = new Date();
 
@@ -66,25 +116,32 @@
                 const icelandMinutes = icelandTime.getMinutes();
                 const icelandSeconds = icelandTime.getSeconds();
 
-                // Determine which hour hand to use (US or Iceland)
-                const hours = icelandHours; // You can switch to usHours if preferred
-                const minutes = icelandMinutes; // Same for minutes and seconds
-                const seconds = icelandSeconds;
-
                 // Calculate degrees for hands
-                const hoursDegrees = ((hours % 12) / 12) * 360 + ((minutes / 60) * 30) + 90;
-                const minutesDegrees = (minutes / 60) * 360 + ((seconds / 60) * 6) + 90;
-                const secondsDegrees = (seconds / 60) * 360 + 90;
+                const usHoursDegrees = ((usHours % 12) / 12) * 360 + ((usMinutes / 60) * 30) + 90;
+                const usMinutesDegrees = (usMinutes / 60) * 360 + ((usSeconds / 60) * 6) + 90;
+                const icelandHoursDegrees = ((icelandHours % 12) / 12) * 360 + ((icelandMinutes / 60) * 30) + 90;
+                const icelandMinutesDegrees = (icelandMinutes / 60) * 360 + ((icelandSeconds / 60) * 6) + 90;
+                const secondsDegrees = (usSeconds / 60) * 360 + 90;
 
                 // Update clock hands
-                document.getElementById('hour-hand').style.transform = `rotate(${hoursDegrees}deg)`;
-                document.getElementById('minute-hand').style.transform = `rotate(${minutesDegrees}deg)`;
-                document.getElementById('second-hand').style.transform = `rotate(${secondsDegrees}deg)`;
+                document.getElementById('hour-hand-us').style.transform = `rotate(${usHoursDegrees}deg)`;
+                document.getElementById('minute-hand-us').style.transform = `rotate(${usMinutesDegrees}deg)`;
+                document.getElementById('hour-hand-iceland').style.transform = `rotate(${icelandHoursDegrees}deg)`;
+                document.getElementById('minute-hand-iceland').style.transform = `rotate(${icelandMinutesDegrees}deg)`;
+                
+                // Smooth sweeping for second hand
+                if (secondsDegrees === previousSecondDegrees) {
+                    // Increment by a tiny amount to create continuous movement
+                    document.getElementById('second-hand').style.transform = `rotate(${secondsDegrees + 0.1}deg)`;
+                } else {
+                    document.getElementById('second-hand').style.transform = `rotate(${secondsDegrees}deg)`;
+                }
+                previousSecondDegrees = secondsDegrees;
             }
 
-            // Update the clock every second
+            // Update the clock every 50ms for smooth second hand movement
             updateClock();
-            setInterval(updateClock, 1000);
+            setInterval(updateClock, 50);
         }
 
         // Start the clock

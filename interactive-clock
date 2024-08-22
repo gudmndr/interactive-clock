@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Clock</title>
+    <style>
+        #clock {
+            font-family: 'Arial', sans-serif;
+            color: #333;
+            font-size: 48px;
+            text-align: center;
+            margin-top: 20%;
+        }
+        .clock-face {
+            position: relative;
+            width: 300px;
+            height: 300px;
+            border: 2px solid black;
+            border-radius: 50%;
+            margin: 0 auto;
+        }
+        .hand {
+            position: absolute;
+            width: 50%;
+            height: 6px;
+            background-color: black;
+            top: 50%;
+            transform-origin: 100%;
+            transform: rotate(90deg);
+            transition: transform 0.5s ease-in-out;
+        }
+        .minute {
+            height: 4px;
+        }
+        .second {
+            height: 2px;
+            background-color: red;
+        }
+    </style>
+</head>
+<body>
+    <div id="clock" class="clock-face">
+        <div class="hand hour" id="hour-hand"></div>
+        <div class="hand minute" id="minute-hand"></div>
+        <div class="hand second" id="second-hand"></div>
+    </div>
+    <script>
+        function startClock() {
+            function updateClock() {
+                const now = new Date();
+
+                const usTimezone = 'America/New_York';
+                const icelandTimezone = 'Atlantic/Reykjavik';
+
+                const usTime = new Date(now.toLocaleString('en-US', { timeZone: usTimezone }));
+                const icelandTime = new Date(now.toLocaleString('en-US', { timeZone: icelandTimezone }));
+
+                // US Time
+                const usHours = usTime.getHours();
+                const usMinutes = usTime.getMinutes();
+                const usSeconds = usTime.getSeconds();
+
+                // Iceland Time
+                const icelandHours = icelandTime.getHours();
+                const icelandMinutes = icelandTime.getMinutes();
+                const icelandSeconds = icelandTime.getSeconds();
+
+                // Determine which hour hand to use (US or Iceland)
+                const hours = icelandHours; // You can switch to usHours if preferred
+                const minutes = icelandMinutes; // Same for minutes and seconds
+                const seconds = icelandSeconds;
+
+                // Calculate degrees for hands
+                const hoursDegrees = ((hours % 12) / 12) * 360 + ((minutes / 60) * 30) + 90;
+                const minutesDegrees = (minutes / 60) * 360 + ((seconds / 60) * 6) + 90;
+                const secondsDegrees = (seconds / 60) * 360 + 90;
+
+                // Update clock hands
+                document.getElementById('hour-hand').style.transform = `rotate(${hoursDegrees}deg)`;
+                document.getElementById('minute-hand').style.transform = `rotate(${minutesDegrees}deg)`;
+                document.getElementById('second-hand').style.transform = `rotate(${secondsDegrees}deg)`;
+            }
+
+            // Update the clock every second
+            updateClock();
+            setInterval(updateClock, 1000);
+        }
+
+        // Start the clock
+        startClock();
+    </script>
+</body>
+</html>

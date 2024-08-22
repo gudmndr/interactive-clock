@@ -27,17 +27,18 @@
         }
         .hand {
             position: absolute;
-            width: 40%;
-            height: 2px;
+            width: 50%;
+            height: 1px; /* Thinner hands */
             top: 50%;
+            left: 50%;
             transform-origin: 100%;
+            transform: translateX(-50%) rotate(90deg); /* Correct rotation and positioning */
             transition-timing-function: linear;
             transition-duration: 0.05s;
             transition-property: transform;
         }
         .hour-hand-iceland {
             background-color: #ff433d;
-            height: 2px;
             border-right: 8px solid #ff433d;
             border-top: 4px solid transparent;
             border-bottom: 4px solid transparent;
@@ -45,14 +46,12 @@
         }
         .minute-hand-iceland {
             background-color: #ff433d;
-            height: 2px;
             border-right: 8px solid #ff433d;
             border-top: 4px solid transparent;
             border-bottom: 4px solid transparent;
         }
         .hour-hand-us {
             background-color: #fb8b1e;
-            height: 2px;
             border-right: 8px solid #fb8b1e;
             border-top: 4px solid transparent;
             border-bottom: 4px solid transparent;
@@ -60,15 +59,13 @@
         }
         .minute-hand-us {
             background-color: #fb8b1e;
-            height: 2px;
             border-right: 8px solid #fb8b1e;
             border-top: 4px solid transparent;
             border-bottom: 4px solid transparent;
         }
         .second-hand {
-            background-color: black;
-            height: 2px;
-            transition-duration: 1s; /* Continuous sweeping motion */
+            background-color: white;
+            height: 1px; /* Thinner hand */
             width: 45%;
         }
         .clock-number {

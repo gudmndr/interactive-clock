@@ -64,7 +64,11 @@
         .second-hand {
             background-color: white;
             height: 2px;
-            width: 45%;
+            width: 50%; /* Extend the second hand to start from the center */
+            top: 50%;
+            left: 50%;
+            transform-origin: 100%;
+            transform: translateX(-50%) rotate(90deg); /* Start pointing at 12 o'clock */
         }
         .clock-number {
             position: absolute;
@@ -145,3 +149,4 @@
     </script>
 </body>
 </html>
+

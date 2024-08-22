@@ -3,13 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Interactive Clock</title>
+    <title>Two Clocks - Reykjavík and US Eastern Time</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Bw+Haas+Grotesk:wght@400&display=swap');
 
         body {
             display: flex;
-            flex-direction: column;
             justify-content: center;
             align-items: center;
             height: 100vh;
@@ -17,10 +16,19 @@
             margin: 0;
             font-family: 'Bw Haas Grotesk', sans-serif;
         }
+        .clock-container {
+            display: flex;
+            gap: 50px;
+        }
+        .clock-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
         .clock-face {
             position: relative;
-            width: 300px;
-            height: 300px;
+            width: 250px;
+            height: 250px;
             border: 2px solid black;
             border-radius: 50%;
             background: black;
@@ -28,7 +36,7 @@
         .hand {
             position: absolute;
             width: 50%;
-            height: 1px; /* Thinner hands */
+            height: 2px;
             top: 50%;
             left: 50%;
             transform-origin: 100%;
@@ -37,40 +45,30 @@
             transition-duration: 0.05s;
             transition-property: transform;
         }
-        .hour-hand-iceland {
+        .hour-hand-reykjavik, .minute-hand-reykjavik {
             background-color: #ff433d;
+            height: 2px;
             border-right: 8px solid #ff433d;
             border-top: 4px solid transparent;
             border-bottom: 4px solid transparent;
             width: 30%;
         }
-        .minute-hand-iceland {
-            background-color: #ff433d;
-            border-right: 8px solid #ff433d;
-            border-top: 4px solid transparent;
-            border-bottom: 4px solid transparent;
-        }
-        .hour-hand-us {
+        .hour-hand-us, .minute-hand-us {
             background-color: #fb8b1e;
+            height: 2px;
             border-right: 8px solid #fb8b1e;
             border-top: 4px solid transparent;
             border-bottom: 4px solid transparent;
             width: 30%;
-        }
-        .minute-hand-us {
-            background-color: #fb8b1e;
-            border-right: 8px solid #fb8b1e;
-            border-top: 4px solid transparent;
-            border-bottom: 4px solid transparent;
         }
         .second-hand {
             background-color: white;
-            height: 1px; /* Thinner hand */
+            height: 2px;
             width: 45%;
         }
         .clock-number {
             position: absolute;
-            font-size: 24px;
+            font-size: 18px;
             font-family: Arial, sans-serif;
             color: white;
         }
@@ -80,8 +78,8 @@
         .num6 { bottom: 10px; left: 50%; transform: translateX(-50%); }
         .num9 { top: 50%; left: 10px; transform: translateY(-50%); }
 
-        .clock-info {
-            margin-top: 20px;
+        .clock-label {
+            margin-top: 10px;
             font-size: 18px;
             color: black;
             text-align: center;
@@ -89,66 +87,61 @@
     </style>
 </head>
 <body>
-    <div class="clock-face">
-        <div class="hand hour-hand-iceland" id="hour-hand-iceland"></div>
-        <div class="hand minute-hand-iceland" id="minute-hand-iceland"></div>
-        <div class="hand hour-hand-us" id="hour-hand-us"></div>
-        <div class="hand minute-hand-us" id="minute-hand-us"></div>
-        <div class="hand second-hand" id="second-hand"></div>
-        <!-- Adding only the main numbers to the clock -->
-        <div class="clock-number num12">12</div>
-        <div class="clock-number num3">3</div>
-        <div class="clock-number num6">6</div>
-        <div class="clock-number num9">9</div>
-    </div>
-    <div class="clock-info">
-        Reykjavík/US Eastern Time - Made by Gudmundur Herbertsson
+    <div class="clock-container">
+        <div class="clock-wrapper">
+            <div class="clock-face">
+                <div class="hand hour-hand-reykjavik" id="hour-hand-reykjavik"></div>
+                <div class="hand minute-hand-reykjavik" id="minute-hand-reykjavik"></div>
+                <div class="hand second-hand" id="second-hand-reykjavik"></div>
+                <div class="clock-number num12">12</div>
+                <div class="clock-number num3">3</div>
+                <div class="clock-number num6">6</div>
+                <div class="clock-number num9">9</div>
+            </div>
+            <div class="clock-label">Reykjavík</div>
+        </div>
+        <div class="clock-wrapper">
+            <div class="clock-face">
+                <div class="hand hour-hand-us" id="hour-hand-us"></div>
+                <div class="hand minute-hand-us" id="minute-hand-us"></div>
+                <div class="hand second-hand" id="second-hand-us"></div>
+                <div class="clock-number num12">12</div>
+                <div class="clock-number num3">3</div>
+                <div class="clock-number num6">6</div>
+                <div class="clock-number num9">9</div>
+            </div>
+            <div class="clock-label">US Eastern Time</div>
+        </div>
     </div>
     <script>
-        function startClock() {
-            function updateClock() {
+        function startClocks() {
+            function updateClock(timezone, hourHandId, minuteHandId, secondHandId) {
                 const now = new Date();
+                const time = new Date(now.toLocaleString('en-US', { timeZone: timezone }));
 
-                const usTimezone = 'America/New_York';
-                const icelandTimezone = 'Atlantic/Reykjavik';
+                const hours = time.getHours();
+                const minutes = time.getMinutes();
+                const seconds = time.getSeconds();
 
-                const usTime = new Date(now.toLocaleString('en-US', { timeZone: usTimezone }));
-                const icelandTime = new Date(now.toLocaleString('en-US', { timeZone: icelandTimezone }));
+                const hoursDegrees = ((hours % 12) / 12) * 360 + ((minutes / 60) * 30) + 90;
+                const minutesDegrees = (minutes / 60) * 360 + ((seconds / 60) * 6) + 90;
+                const secondsDegrees = (seconds / 60) * 360 + 90;
 
-                // US Time
-                const usHours = usTime.getHours();
-                const usMinutes = usTime.getMinutes();
-                const usSeconds = usTime.getSeconds();
-
-                // Iceland Time
-                const icelandHours = icelandTime.getHours();
-                const icelandMinutes = icelandTime.getMinutes();
-                const icelandSeconds = icelandTime.getSeconds();
-
-                // Calculate degrees for hands
-                const usHoursDegrees = ((usHours % 12) / 12) * 360 + ((usMinutes / 60) * 30) + 90;
-                const usMinutesDegrees = (usMinutes / 60) * 360 + ((usSeconds / 60) * 6) + 90;
-                const icelandHoursDegrees = ((icelandHours % 12) / 12) * 360 + ((icelandMinutes / 60) * 30) + 90;
-                const icelandMinutesDegrees = (icelandMinutes / 60) * 360 + ((icelandSeconds / 60) * 6) + 90;
-                const secondsDegrees = (usSeconds / 60) * 360 + 90;
-
-                // Update clock hands
-                document.getElementById('hour-hand-us').style.transform = `rotate(${usHoursDegrees}deg)`;
-                document.getElementById('minute-hand-us').style.transform = `rotate(${usMinutesDegrees}deg)`;
-                document.getElementById('hour-hand-iceland').style.transform = `rotate(${icelandHoursDegrees}deg)`;
-                document.getElementById('minute-hand-iceland').style.transform = `rotate(${icelandMinutesDegrees}deg)`;
-                
-                // Continuous sweeping second hand
-                document.getElementById('second-hand').style.transform = `rotate(${secondsDegrees}deg)`;
+                document.getElementById(hourHandId).style.transform = `rotate(${hoursDegrees}deg)`;
+                document.getElementById(minuteHandId).style.transform = `rotate(${minutesDegrees}deg)`;
+                document.getElementById(secondHandId).style.transform = `rotate(${secondsDegrees}deg)`;
             }
 
-            // Update the clock every 20ms for a smooth second hand movement
-            updateClock();
-            setInterval(updateClock, 20);
+            function updateBothClocks() {
+                updateClock('Atlantic/Reykjavik', 'hour-hand-reykjavik', 'minute-hand-reykjavik', 'second-hand-reykjavik');
+                updateClock('America/New_York', 'hour-hand-us', 'minute-hand-us', 'second-hand-us');
+            }
+
+            updateBothClocks();
+            setInterval(updateBothClocks, 20); // Update every 20ms for smooth second hand movement
         }
 
-        // Start the clock
-        startClock();
+        startClocks();
     </script>
 </body>
 </html>
